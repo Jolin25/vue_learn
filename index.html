@@ -11,6 +11,13 @@
     <div id="app">{{message}}  {{message+message}}   {{message+2}}
         <!-- :是v-bind的缩写,是一个指令,我们可以把它理解成一个标志位,vue在读到这个标志位以后就回去做对应的处理 -->
         <div :id="message"></div>
+        <ul>
+            <!-- v-if根据值可以被挂载或者不被挂载到DOM树上 -->
+            <li v-if="!item.del">{{item.title}}</li>
+            <li v-else style="text-decoration: line-through">{{item.title}}</li>
+            <!-- v-show 不管结果怎么样,都是挂载到了DOM树上的,只是改变了display属性的值 -->
+            <li v-show = "!item.del">{{item.title}}</li>
+        </ul>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script> 
     <script>
@@ -19,7 +26,11 @@
             // #app作为Vue实例的一个挂载目标
             el: '#app',
             data:{
-                message: 'hello'
+                message: 'hello',
+                item:{
+                    title:'课程1',
+                    del: true
+                }
             }
         })
     </script>
