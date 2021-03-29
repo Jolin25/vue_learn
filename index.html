@@ -1,38 +1,136 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 </head>
+
 <body>
     <!-- {{支持表达式}},用于解析动态的值 -->
-    <div id="app">{{message}}  {{message+message}}   {{message+2}}
+    <div id="app">{{message}} {{message+message}} {{message+2}}
         <!-- :是v-bind的缩写,是一个指令,我们可以把它理解成一个标志位,vue在读到这个标志位以后就回去做对应的处理 -->
         <div :id="message"></div>
+        <!-- <ul> -->
+        <!-- v-if根据值可以被挂载或者不被挂载到DOM树上 -->
+        <!-- <li v-if="!item.del">{{item.title}}</li> -->
+        <!-- <li v-else style="text-decoration: line-through">{{item.title}}</li> -->
+        <!-- v-show 不管结果怎么样,都是挂载到了DOM树上的,只是改变了display属性的值 -->
+        <!-- <li v-show="!item.del">{{item.title}}</li> -->
+        <!-- </ul> -->
+        <!-- 用v-bind来传递数据到子组件，如果是子组件没有在props里面设置的，那么就自动加在模板的最外层元素上 -->
         <ul>
-            <!-- v-if根据值可以被挂载或者不被挂载到DOM树上 -->
-            <li v-if="!item.del">{{item.title}}</li>
-            <li v-else style="text-decoration: line-through">{{item.title}}</li>
-            <!-- v-show 不管结果怎么样,都是挂载到了DOM树上的,只是改变了display属性的值 -->
-            <li v-show = "!item.del">{{item.title}}</li>
+            <todo-item v-for="item in list" :title="item.title" :del="item.del">{{item.title}}</todo-item>
         </ul>
+        <todo-list :list="list"></todo-list>
+        <todo-list2></todo-list2>
+
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script> 
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
     <script>
+
+        // 组件 -> 可复用,要放在前面，对加载顺序应该是有要求
+        // 拆分后的HTML、逻辑、样式　组成在一起就是组件
+        Vue.component('todo-item', {
+            // props用来将父组件的数据传递到子组件
+            props: {
+                // 设置数据类型
+                title: String,
+                // 设置数据类型和默认值
+                del: {
+                    type: Boolean,
+                    default: true
+                }
+            },
+            // 模板
+            template: `
+                    <li>
+                      <span v-if="!del">{{title}}</span>
+                      <span v-else style="text-decoration:line-through">{{title}}</span>
+                      <button v-show="!del" @click="handleClick">删除</button>
+                    </li>
+            `,
+            // 可以把数据直接写在data里，用方法返回是为了独一无二（目前还比较疑惑这一点？）
+            data: function () {
+                return {}
+            },
+            methods: {
+                handleClick: function () {
+                    console.log("点击删除按钮");
+                    // emit 子组件调用父组件的方法，并向父组件的方法传递参数
+                    this.$emit('delete', this.title);
+                }
+            }
+        })
+        Vue.component('todo-list', {
+            props: {
+                list: Array
+            },
+            template: `
+                 <ul>
+                    <todo-item v-for="item in list" :title="item.title" :del="item.del"　@delete="handleDelete">{{item.title}}</todo-item>
+                 </ul>
+            `,
+            data: function () {
+                return {}
+            },
+            methods: {
+                handleDelete: function (val) {
+                    console.log(val);
+                }
+            }
+        })
+        Vue.component('todo-list2', {
+
+            template: `
+                 <ul>
+                    <todo-item v-for="item in list" :title="item.title" :del="item.del">{{item.title}}</todo-item>
+                 </ul>
+            `,
+            data: function () {
+                return {
+                    list: [
+                        {
+                            title: '课程1',
+                            del: true
+                        }, {
+                            title: '课程2',
+                            del: false
+                        }, {
+                            title: '课程3',
+                            del: true
+                        },
+                    ]
+                }
+            }
+        })
         var vm = new Vue({
             // 因为是id,所以用#
             // #app作为Vue实例的一个挂载目标
             el: '#app',
-            data:{
+            data: {
                 message: 'hello',
-                item:{
-                    title:'课程1',
+                item: {
+                    title: '课程1',
                     del: true
-                }
+                },
+                list: [
+                    {
+                        title: '课程1',
+                        del: true
+                    }, {
+                        title: '课程2',
+                        del: false
+                    }, {
+                        title: '课程3',
+                        del: true
+                    },
+                ]
             }
-        })
+        });
     </script>
 </body>
+
 </html>
