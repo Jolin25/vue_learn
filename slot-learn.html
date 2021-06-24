@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="app">
+        <base-layout :ifShow=a>
+            <template v-slot:header>
+                <h1>Here might be a page title</h1>
+            </template>
+        </base-layout>
+    </div>
+</body>
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
+<script>
+
+    Vue.component('base-layout', {
+        props: {
+            url: String,
+            ifShow: Boolean
+        },
+        template: `
+               <div class="container">
+                    <header>
+                        <!-- 我们希望把页头放这里 -->
+                         <slot name="header">hhhhheader</slot>
+                    </header>
+                    <main>
+                        <!-- 我们希望把主要内容放这里 -->
+                        <slot></slot>
+                        {{ifShow}}
+                    </main>
+                    <footer>
+                        <!-- 我们希望把页脚放这里 -->
+                        <slot name="footer"></slot>
+                    </footer>
+                </div>
+            `,
+        data: function () {
+            return {
+                header: "test"
+            }
+        },
+        mounted: function mounted() {
+            this.init();
+        },
+        methods: {
+            init: function init() {
+                debugger
+                console.log(this.$slots.header)
+                console.log(this.ifShow)
+
+            }
+
+        }
+    })
+    // 顺序啊！！！要在component的后面
+    var vm = new Vue({
+        // 因为是id,所以用#
+        // #app作为Vue实例的一个挂载目标
+        el: '#app',
+        data: {
+            a: true
+        }
+    });
+</script>
+
+</html>
